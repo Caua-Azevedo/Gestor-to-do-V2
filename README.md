@@ -131,8 +131,8 @@ Authorization: Bearer SEU_TOKEN
 
 ```json
 {
-  "nome": "Rafael",
-  "email": "rafael@email.com",
+  "nome": "Caua",
+  "email": "caua@email.com",
   "senha": "123456"
 }
 ```
@@ -143,7 +143,7 @@ Authorization: Bearer SEU_TOKEN
 
 ```json
 {
-  "email": "rafael@email.com",
+  "email": "caua@email.com",
   "senha": "123456"
 }
 ```
