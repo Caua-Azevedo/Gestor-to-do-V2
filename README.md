@@ -183,7 +183,7 @@ Authorization: Bearer SEU_TOKEN
 
 ## 👨‍💻 Autor
 
-**Rafael Ribeiro Carvalho**
+**Caua Azevedo**
 
 📍 Estudante de Sistemas de Informação
 🚀 Focado em desenvolvimento backend e APIs REST
