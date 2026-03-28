@@ -1,51 +1,29 @@
-const { todos } = require('../database/data')
-const generateId = require('../utils/generateId')
+const todoQueries = require('../queries/todoQueries');
 
-exports.createTodo = (req, res) => {
-  const { title } = req.body
+exports.create = async (req, res) => {
+  const { title, completed } = req.body;
+  const todo = await todoQueries.createTodo(title, completed, req.user.id);
+  res.status(201).json(todo);
+};
 
-  if (!title) return res.status(400).json({ error: 'Título obrigatório' })
+exports.getAll = async (req, res) => {
+  const todos = await todoQueries.getAllTodos(req.user.id);
+  res.json(todos);
+};
 
-  const newTodo = {
-    id: generateId(),
-    title,
-    userId: req.userId
-  }
+exports.getById = async (req, res) => {
+  const todo = await todoQueries.getTodoById(req.params.id);
+  if (!todo) return res.status(404).json({ error: 'Todo não encontrado' });
+  res.json(todo);
+};
 
-  todos.push(newTodo)
+exports.update = async (req, res) => {
+  const { title, completed } = req.body;
+  await todoQueries.updateTodo(req.params.id, title, completed);
+  res.json({ message: 'Todo atualizado' });
+};
 
-  return res.status(201).json(newTodo)
-}
-
-exports.getTodos = (req, res) => {
-  const userTodos = todos.filter(t => t.userId === req.userId)
-  return res.json(userTodos)
-}
-
-exports.updateTodo = (req, res) => {
-  const { title } = req.body
-
-  if (!title) return res.status(400).json({ error: 'Título obrigatório' })
-
-  const todo = todos.find(
-    t => t.id == req.params.id && t.userId === req.userId
-  )
-
-  if (!todo) return res.status(404).json({ error: 'Todo não encontrado' })
-
-  todo.title = title
-
-  return res.json(todo)
-}
-
-exports.deleteTodo = (req, res) => {
-  const index = todos.findIndex(
-    t => t.id == req.params.id && t.userId === req.userId
-  )
-
-  if (index === -1) return res.status(404).json({ error: 'Todo não encontrado' })
-
-  todos.splice(index, 1)
-
-  return res.status(204).send()
-}
+exports.delete = async (req, res) => {
+  await todoQueries.deleteTodo(req.params.id);
+  res.json({ message: 'Todo removido' });
+};

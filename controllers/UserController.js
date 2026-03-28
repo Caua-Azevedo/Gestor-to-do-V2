@@ -1,66 +1,29 @@
-const { users } = require('../database/data')
-const generateId = require('../utils/generateId')
-const bcrypt = require('bcrypt')
+const userQueries = require('../queries/userQueries');
 
-exports.createUser = async (req, res) => {
-  const { email, senha } = req.body
+exports.create = async (req, res) => {
+  const { name, email, password } = req.body;
+  const user = await userQueries.createUser(name, email, password);
+  res.status(201).json(user);
+};
 
-  if (!email) return res.status(400).json({ error: 'Email obrigatório' })
-  if (!email.includes('@')) return res.status(400).json({ error: 'Email inválido' })
-  if (users.some(u => u.email === email)) return res.status(400).json({ error: 'Email já existe' })
-  if (!senha || senha.length < 6) return res.status(400).json({ error: 'Senha fraca' })
+exports.getAll = async (req, res) => {
+  const users = await userQueries.getAllUsers();
+  res.json(users);
+};
 
-  const hashedsenha = await bcrypt.hash(senha, 10)
+exports.getById = async (req, res) => {
+  const user = await userQueries.getUserById(req.params.id);
+  if (!user) return res.status(404).json({ error: 'Usuário não encontrado' });
+  res.json(user);
+};
 
-  const newUser = {
-    id: generateId(),
-    email,
-    senha: hashedsenha
-  }
+exports.update = async (req, res) => {
+  const { name, email } = req.body;
+  await userQueries.updateUser(req.params.id, name, email);
+  res.json({ message: 'Usuário atualizado' });
+};
 
-  users.push(newUser)
-
-  const { senha: _, ...userSafe } = newUser
-  return res.status(201).json(userSafe)
-}
-
-exports.getUsers = (req, res) => {
-  const safeUsers = users.map(({ senha, ...u }) => u)
-  return res.json(safeUsers)
-}
-
-exports.updateUser = async (req, res) => {
-  const { id } = req.params
-  const { email, senha } = req.body
-
-  const user = users.find(u => u.id == id)
-
-  if (!user) return res.status(404).json({ error: 'Usuário não encontrado' })
-
-  if (email) {
-    if (!email.includes('@')) {
-      return res.status(400).json({ error: 'Email inválido' })
-    }
-    user.email = email
-  }
-
-  if (senha) {
-    if (senha.length < 6) {
-      return res.status(400).json({ error: 'Senha fraca' })
-    }
-    user.senha = await bcrypt.hash(senha, 10)
-  }
-
-  const { senha: _, ...userSafe } = user
-  return res.json(userSafe)
-}
-
-exports.deleteUser = (req, res) => {
-  const index = users.findIndex(u => u.id == req.params.id)
-
-  if (index === -1) return res.status(404).json({ error: 'Usuário não encontrado' })
-
-  users.splice(index, 1)
-
-  return res.status(204).send()
-}
+exports.delete = async (req, res) => {
+  await userQueries.deleteUser(req.params.id);
+  res.json({ message: 'Usuário removido' });
+};
