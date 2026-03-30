@@ -1,9 +1,7 @@
 const db = require('../config/db');
 const { v4: uuidv4 } = require('uuid');
 
-exports.createUser = async (name, email, password) => {
-  const id = uuidv4();
-
+exports.createUser = async (id, name, email, password) => {
   await db.query(
     'INSERT INTO users (id, name, email, password_hash) VALUES (?, ?, ?, ?)',
     [id, name, email, password]
@@ -31,4 +29,12 @@ exports.updateUser = async (id, name, email) => {
 
 exports.deleteUser = async (id) => {
   await db.query('DELETE FROM users WHERE id = ?', [id]);
+};
+
+exports.getUserByEmail = async (email) => {
+  const [rows] = await db.query(
+    'SELECT * FROM users WHERE email = ?',
+    [email]
+  );
+  return rows[0];
 };
