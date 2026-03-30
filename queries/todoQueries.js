@@ -1,16 +1,15 @@
 const db = require('../config/db');
 const { v4: uuidv4 } = require('uuid');
 
-exports.createTask = async (title, description, userId, projectId) => {
+exports.createTodo = async (title, completed, userId) => {
   const id = uuidv4();
 
   await db.query(
-    `INSERT INTO tasks (id, title, description, project_id)
-     VALUES (?, ?, ?, ?)`,
-    [id, title, description, projectId]
+    'INSERT INTO todos (id, title, completed, user_id) VALUES (?, ?, ?, ?)',
+    [id, title, completed, userId]
   );
 
-  return { id, title };
+  return { id, title, completed };
 };
 
 exports.getAllTodos = async (userId) => {
