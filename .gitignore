@@ -1,0 +1,36 @@
+# Dependências
+node_modules/
+
+# Variáveis de ambiente (SENHAS DO MYSQL, JWT, ETC)
+.env
+.env.*
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Build
+dist/
+build/
+
+# Arquivos temporários
+tmp/
+temp/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# IDEs
+.vscode/
+.idea/
+
+# Cobertura de testes
+coverage/
+
+# Dumps de banco (MUITO IMPORTANTE ignorar)
+*.sql
+
+# Configs locais
+config/local.json
